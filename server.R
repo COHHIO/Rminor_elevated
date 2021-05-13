@@ -34,6 +34,13 @@ function(input, output, session) {
     
   })
   
+  pass_icon <- '<span style="color: Teal; font-size: 150%;">
+            <i class="fas fa-check"></i>
+            </span>'
+  fail_icon <- '<span style="color: Tomato; font-size: 150%;">
+            <i class="fas fa-times"></i>
+            </span>'
+  
   output$headerPrioritization <- renderUI({
     list(h2("Prioritization Report"),
          h4("Literally Homeless Clients as of", meta_HUDCSV_Export_End))
@@ -2543,7 +2550,10 @@ function(input, output, session) {
             DQflag == 3 ~ "", # "Docs received, not yet scored",
             DQflag == 4 ~ "", # "CoC Error",
             DQflag == 5 ~ "" # "Docs received past the due date"
-          )
+          ),
+          DQ = case_when(
+            DQflag == 0 ~ pass_icon,
+            DQflag == 1 ~ fail_icon)
         ) %>%
         filter(!Measure %in% c("Moved into Own Housing",
                                "Average Length of Stay")) %>%
@@ -2600,10 +2610,12 @@ function(input, output, session) {
         } else if(ptc == 2) {
           th
         },
+        escape = FALSE,
         rownames = FALSE,
         options = list(dom = 't',
                        pageLength = 100)
-      )
+      ) %>%
+        formatStyle('Data Quality', textAlign = 'center')
     })
   
   output$pe_ExitsToPH <- DT::renderDataTable({
