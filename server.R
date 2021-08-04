@@ -1861,6 +1861,62 @@ function(input, output, session) {
     }
   )
   
+           
+  output$usich_1 <-  renderValueBox({
+    valueBox(
+      value = nrow(veteran_active_list() %>%
+                  filter((ListStatus != "Inactive (Non-Permanent Housing)" &
+                           ListStatus != "Inactive (Permanently Housed)") &
+                           (County %in% c(input$vetBenchmarkCounty) |
+                              is.na(County)))),
+      subtitle = "Active Veterans",
+      icon = icon("remove"), width = 4, color = "red")
+  })
+  
+  output$usich_2 <-  renderValueBox({
+    valueBox(
+      value = nrow(veteran_active_list() %>%
+                     filter((ListStatus != "Inactive (Non-Permanent Housing)" &
+                              ListStatus != "Inactive (Permanently Housed)" &
+                              ChronicStatus %in% c("Chronic", "Aged In")) &
+                              (County %in% c(input$vetBenchmarkCounty) |
+                                 is.na(County)))),
+      subtitle = "Chronic Active Veterans",
+      icon = icon("remove"), width = 4, color = "red")
+  })
+  
+  output$usich_3 <-  renderValueBox({
+    valueBox(
+      value = nrow(veteran_active_list() %>%
+                     filter(ListStatus != "Inactive (Non-Permanent Housing)" &
+                              ListStatus != "Inactive (Permanently Housed)" &
+                              (ChronicStatus %in% c("Chronic", "Aged In") |
+                                 LongTermStatus == "Long Term") &
+                              (County %in% c(input$vetBenchmarkCounty) |
+                                 is.na(County)))),
+      subtitle = "Chronic and Long-Term Active Veterans",
+      icon = icon("remove"), width = 4, color = "red")
+  })
+  
+  output$usich_4 <-  renderValueBox({
+    valueBox(
+      value = nrow(veteran_active_list() %>%
+                     filter(ListStatus != "Inactive (Non-Permanent Housing)" &
+                              ListStatus != "Inactive (Permanently Housed)" &
+                              (ChronicStatus %in% c("Chronic", "Aged In") |
+                                 LongTermStatus == "Long Term") &
+                              (County %in% c(input$vetBenchmarkCounty) |
+                                 is.na(County)) &
+                              (OfferDate >= today() - days(14) |  ## group 1
+                                 # |                                ## need to add group 2
+                                 (AcceptDeclineDate >= today() - days(90) &
+                                    OfferAccepted == "Yes")
+                                 )
+                              )),
+      subtitle = "Excluded Veterans",
+      icon = icon("remove"), width = 4, color = "red")
+  })
+  
   output$DQWarnings <- DT::renderDataTable({
     ReportStart <- format.Date(input$dq_startdate, "%m-%d-%Y")
     ReportEnd <- format.Date(meta_HUDCSV_Export_Date, "%m-%d-%Y")
