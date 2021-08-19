@@ -87,6 +87,11 @@ function(input, output, session) {
     )
   })
   
+  output$headerUSICH <- renderUI({
+    list(h2("USICH Benchmarks"),
+         h4(paste("Veteran Benchmarks as of", meta_HUDCSV_Export_End))
+    )
+  })
   
   output$headerCoCCompetitionProjectLevel <- renderUI({
     
@@ -1860,62 +1865,153 @@ function(input, output, session) {
                    ) %>% unique(), path = file)
     }
   )
+      
   
-           
   output$usich_1 <-  renderValueBox({
+    
+    excluded_vets <- veteran_active_list() %>%
+      filter(OfferDate >= today() - days(14) |            ## group 1
+               (!is.na(transitional_housing_entry) &      ## group 2
+                  OfferAccepted == "No") |      
+               (AcceptDeclineDate >= today() - days(90) & ## group 3
+                  OfferAccepted == "Yes"))
+    
+    filtered_vets <- veteran_active_list() %>%
+      filter(ListStatus != "Inactive (Non-Permanent Housing)" &
+               ListStatus != "Inactive (Permanently Housed)" &
+               (ChronicStatus %in% c("Chronic", "Aged In") |
+                  LongTermStatus == "Long Term") &
+               (County %in% c(input$vetBenchmarkCounty) | is.na(County))  &
+               PersonalID %nin% excluded_vets$PersonalID)
+    
+    
+    chronic_vets <- filtered_vets %>%
+      filter(ChronicStatus %in% c("Chronic", "Aged In"))
+    
+    long_term_vets <- filtered_vets %>%
+      filter(PersonalID %nin% chronic_vets$PersonalID &
+               LongTermStatus == "Long Term")
+    
     valueBox(
-      value = nrow(veteran_active_list() %>%
-                  filter((ListStatus != "Inactive (Non-Permanent Housing)" &
-                           ListStatus != "Inactive (Permanently Housed)") &
-                           (County %in% c(input$vetBenchmarkCounty) |
-                              is.na(County)))),
-      subtitle = "Active Veterans",
-      icon = icon("remove"), width = 4, color = "red")
+      value = paste0("Chronic and Long-Term Veterans: ", nrow(chronic_vets) + nrow(long_term_vets)),
+      subtitle = paste0(nrow(chronic_vets),
+                        " chronic vet",
+                        if_else(nrow(chronic_vets) == 1, ", ", "s, "),
+                        nrow(long_term_vets),
+                        " long-term vet",
+                        if_else(nrow(long_term_vets) == 1, "", "s")),
+      icon = icon(if_else(nrow(chronic_vets) + nrow(long_term_vets) == 0,
+                          "check", "remove")),
+      color = if_else(nrow(chronic_vets) + nrow(long_term_vets) == 0,
+                      "teal", "red"))
   })
+  
   
   output$usich_2 <-  renderValueBox({
+
+    filtered_housed_vets <- permanently_housed_vets %>%
+      filter(County %in% c(input$vetBenchmarkCounty) | is.na(County)) %>%
+      group_by(PersonalID) %>%
+      arrange(desc(time_to_house)) %>%
+      slice(1L) %>%
+      ungroup()
+    
+    housed_vets <- nrow(filtered_housed_vets)
+    total_time <- sum(filtered_housed_vets$time_to_house)
+
     valueBox(
-      value = nrow(veteran_active_list() %>%
-                     filter((ListStatus != "Inactive (Non-Permanent Housing)" &
-                              ListStatus != "Inactive (Permanently Housed)" &
-                              ChronicStatus %in% c("Chronic", "Aged In")) &
-                              (County %in% c(input$vetBenchmarkCounty) |
-                                 is.na(County)))),
-      subtitle = "Chronic Active Veterans",
-      icon = icon("remove"), width = 4, color = "red")
+      value = paste0("Average Time to House: ",
+                     if_else(housed_vets == 0, "0 days",
+                             paste(round(total_time/housed_vets, 2),
+                                   if_else(round(total_time/housed_vets, 2) == 1,
+                                           " day", " days")))),
+      subtitle = paste0(formatC(total_time, big.mark=","),
+                        " total day",
+                        if_else(total_time == 1, " to house ", "s to house "),
+                        housed_vets,
+                        " veteran",
+                        if_else(housed_vets == 1, "", "s")),
+      icon = icon(case_when(housed_vets == 0 ~ "minus-circle",
+                            round(total_time/housed_vets, 2) <= 90 ~ "check", 
+                            TRUE ~ "remove")),
+      color = case_when(housed_vets == 0 ~ "black",
+                        round(total_time/housed_vets, 2) <= 90 ~ "teal", 
+                        TRUE ~ "red"))
   })
+  
   
   output$usich_3 <-  renderValueBox({
+    
+    filtered_new_vets <- entered_past_90_vets %>%
+      filter(County %in% c(input$vetBenchmarkCounty) | is.na(County)) %>%
+      group_by(PersonalID) %>%
+      arrange(desc(housed_in_last_90)) %>%
+      slice(1L) %>%
+      ungroup()
+    
+    new_vets <- nrow(filtered_new_vets)
+    new_housed_vets <- nrow(filtered_new_vets %>%
+                                    filter(housed_in_last_90 == 1))
+    
+    housed_vets <- nrow(permanently_housed_vets %>%
+                                filter(County %in% c(input$vetBenchmarkCounty) | is.na(County)) %>%
+                                group_by(PersonalID) %>%
+                                arrange(desc(time_to_house)) %>%
+                                slice(1L) %>%
+                                ungroup())
+    
     valueBox(
-      value = nrow(veteran_active_list() %>%
-                     filter(ListStatus != "Inactive (Non-Permanent Housing)" &
-                              ListStatus != "Inactive (Permanently Housed)" &
-                              (ChronicStatus %in% c("Chronic", "Aged In") |
-                                 LongTermStatus == "Long Term") &
-                              (County %in% c(input$vetBenchmarkCounty) |
-                                 is.na(County)))),
-      subtitle = "Chronic and Long-Term Active Veterans",
-      icon = icon("remove"), width = 4, color = "red")
+      value = paste0("New Veterans/Permanent Exits: ",
+                     if_else(housed_vets == 0, 0, 
+                             round((new_vets - new_housed_vets) / housed_vets, 2))),
+      subtitle = paste0(new_vets, " new veteran",
+                        if_else(new_vets == 1, "", "s"),
+                        if_else(new_housed_vets == 0, ", ",
+                                paste0("(", new_housed_vets, " now housed), ")),
+                        housed_vets,
+                        " veteran",
+                        if_else(housed_vets == 1, " housed", "s housed")),
+      icon = icon(case_when(housed_vets == 0 ~ "minus-circle",
+                            round((new_vets - new_housed_vets) / housed_vets, 2) <= 1 ~ "check", 
+                            TRUE ~ "remove")),
+      color = case_when(housed_vets == 0 ~ "black",
+                        round((new_vets - new_housed_vets) / housed_vets, 2) <= 1 ~ "teal", 
+                        TRUE ~ "red"))
   })
   
+  
   output$usich_4 <-  renderValueBox({
+    
+    new_vets <- nrow(entered_past_90_vets %>%
+                       filter(County %in% c(input$vetBenchmarkCounty) | is.na(County)) %>%
+                       group_by(PersonalID) %>%
+                       arrange(desc(housed_in_last_90)) %>%
+                       slice(1L) %>%
+                       ungroup())
+    
+    new_gpd_vets <- nrow(new_gpd_vets %>%
+                          filter(County %in% c(input$vetBenchmarkCounty) | is.na(County)) %>%
+                          group_by(PersonalID) %>%
+                          slice(1L) %>%
+                          ungroup())
+    
     valueBox(
-      value = nrow(veteran_active_list() %>%
-                     filter(ListStatus != "Inactive (Non-Permanent Housing)" &
-                              ListStatus != "Inactive (Permanently Housed)" &
-                              (ChronicStatus %in% c("Chronic", "Aged In") |
-                                 LongTermStatus == "Long Term") &
-                              (County %in% c(input$vetBenchmarkCounty) |
-                                 is.na(County)) &
-                              (OfferDate >= today() - days(14) |  ## group 1
-                                 # |                                ## need to add group 2
-                                 (AcceptDeclineDate >= today() - days(90) &
-                                    OfferAccepted == "Yes")
-                                 )
-                              )),
-      subtitle = "Excluded Veterans",
-      icon = icon("remove"), width = 4, color = "red")
+      value = paste0("GPD Entries/New Veterans: ",
+                     if_else(new_vets == 0, 0, 
+                             round(new_gpd_vets / new_vets, 2))),
+      subtitle = paste0(new_gpd_vets, " new GPD ",
+                        if_else(new_gpd_vets == 1, "entry, ", "entries, "),
+                        new_vets,
+                        " new veteran",
+                        if_else(new_vets == 1, "", "s")),
+      icon = icon(case_when(new_vets == 0 ~ "minus-circle",
+                            round(new_gpd_vets / new_vets, 2) < 1 ~ "check", 
+                            TRUE ~ "remove")),
+      color = case_when(new_vets == 0 ~ "black",
+                        round(new_gpd_vets / new_vets, 2) < 1 ~ "teal", 
+                        TRUE ~ "red"))
   })
+
   
   output$DQWarnings <- DT::renderDataTable({
     ReportStart <- format.Date(input$dq_startdate, "%m-%d-%Y")

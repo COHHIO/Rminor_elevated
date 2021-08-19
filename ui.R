@@ -399,6 +399,10 @@ dashboardPage(
       tabItem(
         tabName = "dashUSICH",
         fluidPage(
+          tags$style(".small-box.bg-black { background-color: #778899 !important;}"),
+          fluidRow(box(htmlOutput(
+            "headerUSICH"
+          ), width = 12)),
           fluidRow(
             box(
               pickerInput(
@@ -413,14 +417,15 @@ dashboardPage(
                   liveSearch = TRUE,
                   liveSearchStyle = 'contains',
                   actionsBox = TRUE
-                )),
-              width = 12
-            )),
-          fluidRow(valueBoxOutput("usich_1"),
-                   valueBoxOutput("usich_2"),
-                   valueBoxOutput("usich_3")),
-          fluidRow(valueBoxOutput("usich_4"))
-        )
+                )))),
+          fluidRow(
+            valueBoxOutput("usich_1", width = 12)),
+          fluidRow(
+            valueBoxOutput("usich_2", width = 12)),
+          fluidRow(
+            valueBoxOutput("usich_3", width = 12)),
+          fluidRow(
+            valueBoxOutput("usich_4", width = 12)))
       ),
       tabItem(
         tabName = "dqTab",
