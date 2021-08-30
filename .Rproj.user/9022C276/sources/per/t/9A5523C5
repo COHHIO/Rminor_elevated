@@ -1,0 +1,26 @@
+{
+    "id": "9A5523C5",
+    "path": "~/R/Contributor_Repos/COHHIO/RminorElevated/R/app_server.R",
+    "project_path": "R/app_server.R",
+    "type": "r_source",
+    "hash": "195690247",
+    "contents": "",
+    "dirty": false,
+    "created": 1630335644428.0,
+    "source_on_save": false,
+    "relative_order": 5,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "0,0",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1630335659,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1630335659866,
+    "read_only": false,
+    "read_only_alternatives": []
+}
