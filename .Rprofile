@@ -1,0 +1,2 @@
+readRenviron("~/.Renviron")
+readRenviron(".Renviron")

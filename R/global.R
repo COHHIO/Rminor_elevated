@@ -31,9 +31,9 @@ if (!exists("df_nms")) {
   e <- environment()
   list2env(readRDS("data/Rminor_elevated.rds"), e)
 }
+rdrop2::drop_auth(rdstoken = "inst/auth/dropbox_auth_token.rds")
 
 providers <- sort(validation()$ProjectName) %>% unique() 
-
 desk_time_providers <- validation() %>%
   dplyr::filter(entered_between(., 
                          format.Date(ymd(today() - years(1)), "%m-%d-%Y"), 

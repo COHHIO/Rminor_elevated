@@ -1,18 +1,10 @@
-# COHHIO_HMIS
-# Copyright (C) 2020  Coalition on Homelessness and Housing in Ohio (COHHIO)
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU Affero General Public License for more details at
-# <https://www.gnu.org/licenses/>. 
-
-function(input, output, session) {
+#' The application server-side
+#' 
+#' @param input,output,session Internal parameters for {shiny}. 
+#'     DO NOT REMOVE.
+#' @import shiny
+#' @noRd
+app_server <- function( input, output, session ) {
   output$headerHome <- renderUI({
     box(
       title = "Welcome",
@@ -34,19 +26,6 @@ function(input, output, session) {
     
   })
   
-  pass_icon <- '<span style="color: teal; font-size: 150%;">
-            <i class="fas fa-check"></i>
-            </span>'
-  fail_icon <- '<span style="color: tomato; font-size: 150%;">
-            <i class="fas fa-times"></i>
-            </span>'
-  unknown_icon <- '<span style="color: grey; font-size: 150%;">
-            <i class="fas fa-question-circle"></i>
-            </span>'
-  alert_icon <- '<span style="color: goldenrod; font-size: 150%;">
-            <i class="fas fa-exclamation-triangle"></i>
-            </span>'
-  
   output$headerPrioritization <- renderUI({
     list(h2("Prioritization Report"),
          h4("Literally Homeless Clients as of", meta_HUDCSV_Export_End))
@@ -66,7 +45,7 @@ function(input, output, session) {
   output$headerVaccineStatus <- renderUI({
     reportstart <- input$vaccine_status_daterange[1]
     reportend <- input$vaccine_status_daterange[2]
-
+    
     list(h2("COVID-19 Vaccine Status"),
          h3(paste("Date Range:", reportstart, "to", reportend)))
   })
@@ -77,16 +56,8 @@ function(input, output, session) {
          h4(format(ymd(
            input$utilizationDate
          ), "%B %Y"))
-         )
-  })
-  
-  
-  output$headerVeterans <- renderUI({
-    list(h2("Veteran Active List"),
-         h4(paste("Homeless Veterans as of", meta_HUDCSV_Export_End))
     )
   })
-  
   
   output$headerCoCCompetitionProjectLevel <- renderUI({
     
@@ -116,8 +87,8 @@ function(input, output, session) {
                format.Date(hc_project_eval_start, "%B %d, %Y"), 
                "to",
                format.Date(hc_project_eval_end, "%B %d, %Y"))),
-      h4(strong("THE DATA ON THIS TAB DOES NOT SHOW CHANGES MADE ON OR AFTER
-                5-7-2021.")),
+      # h4(strong("THE DATA ON THIS TAB DOES NOT SHOW CHANGES MADE ON OR AFTER
+      #           5-7-2021.")),
       h4(input$pe_provider),
       hr(),
       h5(strong("Next Due Date:"),
@@ -125,8 +96,8 @@ function(input, output, session) {
          "| ",
          next_thing_due$Event),
       p("Please consult the", 
-            a("CoC Program",
-        href = "https://cohhio.org/boscoc/coc-program/", target="_blank"), 
+        a("CoC Program",
+          href = "https://cohhio.org/boscoc/coc-program/", target="_blank"), 
         "page for complete specifications and timeline.")
     )
   })
@@ -233,120 +204,120 @@ function(input, output, session) {
   })
   
   output$DeskTimePlotDetail <- renderPlot({
-  provider <- input$providerDeskTime
-  
-  ReportStart <- format.Date(ymd(today() - years(1)), "%m-%d-%Y")
-  ReportEnd <- format.Date(ymd(today()), "%m-%d-%Y")
-  
-  desk_time <- validation() %>%
-    filter(ProjectName == provider &
-             entered_between(., ReportStart, ReportEnd) &
-             ProjectType %in% c(1, 2, 3, 4, 8, 9, 12, 13)) %>%
-    select(ProjectName, PersonalID, HouseholdID, EntryDate, DateCreated) %>%
-    mutate(
-      DeskTime = difftime(floor_date(DateCreated, unit = "day"),
-                          EntryDate,
-                          units = "days"),
-      DeskTime = as.integer(floor(DeskTime)),
-      GoalMet = if_else(DeskTime > 5 |
-                          DeskTime < 0,
-                        "chocolate2",
-                        "forestgreen")
-    ) %>%
-    select(HouseholdID,
-           PersonalID,
-           ProjectName,
-           EntryDate,
-           DateCreated,
-           DeskTime,
-           GoalMet) 
-  
-  desk_time_medians <- desk_time %>%
-    group_by(ProjectName) %>%
-    summarise(MedianDeskTime = median(DeskTime),
-              TotalEntered = n()) %>%
-    ungroup()
-  
-  dq_plot_desk_time <-
-    ggplot(
-      desk_time,
-      aes(x = EntryDate, y = DeskTime)
-    ) +
-    geom_point(aes(color = GoalMet, size = 8, alpha = .2),
-               show.legend = FALSE)+
-    scale_color_identity() +
-    geom_hline(yintercept = 5, color = "forestgreen") +
-    geom_hline(yintercept = 0, color = "forestgreen") +
-    geom_hline(
-      data = desk_time_medians,
-      aes(yintercept = MedianDeskTime),
-      color = "black"
-    ) +
-    xlim(today() - years(1), today()) +
-    geom_label(x = today() - days(180),
-               y = desk_time_medians %>%
-                 pull(MedianDeskTime),
-               label = paste("Median:", 
-                             desk_time_medians %>%
-                               pull(MedianDeskTime),
-                             "days | Total Clients:",
-                             desk_time_medians %>%
-                               pull(TotalEntered))) +
-    geom_label(x = today() - days(300),
-               y = 5,
-               label = "DQ Standards (5 days or less)") +
-    labs(x = "Entry Date",
-         y = "Data Entry Delay (in days)") +
-    theme_minimal(base_size = 18)
-  
-  dq_plot_desk_time
-})
+    provider <- input$providerDeskTime
+    
+    ReportStart <- format.Date(ymd(today() - years(1)), "%m-%d-%Y")
+    ReportEnd <- format.Date(ymd(today()), "%m-%d-%Y")
+    
+    desk_time <- validation() %>%
+      filter(ProjectName == provider &
+               entered_between(., ReportStart, ReportEnd) &
+               ProjectType %in% c(1, 2, 3, 4, 8, 9, 12, 13)) %>%
+      select(ProjectName, PersonalID, HouseholdID, EntryDate, DateCreated) %>%
+      mutate(
+        DeskTime = difftime(floor_date(DateCreated, unit = "day"),
+                            EntryDate,
+                            units = "days"),
+        DeskTime = as.integer(floor(DeskTime)),
+        GoalMet = if_else(DeskTime > 5 |
+                            DeskTime < 0,
+                          "chocolate2",
+                          "forestgreen")
+      ) %>%
+      select(HouseholdID,
+             PersonalID,
+             ProjectName,
+             EntryDate,
+             DateCreated,
+             DeskTime,
+             GoalMet) 
+    
+    desk_time_medians <- desk_time %>%
+      group_by(ProjectName) %>%
+      summarise(MedianDeskTime = median(DeskTime),
+                TotalEntered = n()) %>%
+      ungroup()
+    
+    dq_plot_desk_time <-
+      ggplot(
+        desk_time,
+        aes(x = EntryDate, y = DeskTime)
+      ) +
+      geom_point(aes(color = GoalMet, size = 8, alpha = .2),
+                 show.legend = FALSE)+
+      scale_color_identity() +
+      geom_hline(yintercept = 5, color = "forestgreen") +
+      geom_hline(yintercept = 0, color = "forestgreen") +
+      geom_hline(
+        data = desk_time_medians,
+        aes(yintercept = MedianDeskTime),
+        color = "black"
+      ) +
+      xlim(today() - years(1), today()) +
+      geom_label(x = today() - days(180),
+                 y = desk_time_medians %>%
+                   pull(MedianDeskTime),
+                 label = paste("Median:", 
+                               desk_time_medians %>%
+                                 pull(MedianDeskTime),
+                               "days | Total Clients:",
+                               desk_time_medians %>%
+                                 pull(TotalEntered))) +
+      geom_label(x = today() - days(300),
+                 y = 5,
+                 label = "DQ Standards (5 days or less)") +
+      labs(x = "Entry Date",
+           y = "Data Entry Delay (in days)") +
+      theme_minimal(base_size = 18)
+    
+    dq_plot_desk_time
+  })
   
   output$DeskTimePlotCoC <- renderPlot({
-  provider <- input$providerDeskTimeCoC
-
-  ReportStart <- format.Date(ymd(today() - years(1)), "%m-%d-%Y")
-  ReportEnd <- format.Date(ymd(today()), "%m-%d-%Y")
-  
-  desk_time <- validation() %>%
-    filter(entered_between(., ReportStart, ReportEnd) &
-             ProjectType %in% c(1, 2, 3, 4, 8, 9, 12, 13)) %>%
-    select(ProjectName, PersonalID, HouseholdID, EntryDate, DateCreated) %>%
-    mutate(
-      DeskTime = difftime(floor_date(DateCreated, unit = "day"),
-                          EntryDate,
-                          units = "days"),
-      DeskTime = as.integer(floor(DeskTime))
-    ) %>%
-    select(HouseholdID,
-           PersonalID,
-           ProjectName,
-           EntryDate,
-           DateCreated,
-           DeskTime) 
-  
-  desk_time_medians <- desk_time %>%
-    group_by(ProjectName) %>%
-    summarise(MedianDeskTime = median(DeskTime)) %>%
-    ungroup() %>%
-    arrange(desc(MedianDeskTime))
-  
-  ggplot(
-    head(desk_time_medians, 10L),
-    aes(
-      x = reorder(ProjectName, MedianDeskTime),
-      y = MedianDeskTime,
-      fill = MedianDeskTime
-    )
-  ) +
-    geom_col(show.legend = FALSE) +
-    coord_flip() +
-    labs(x = "",
-         y = "Median Days") +
-    scale_fill_viridis_c(direction = -1) +
-    theme_minimal(base_size = 18)
-  
-})
+    provider <- input$providerDeskTimeCoC
+    
+    ReportStart <- format.Date(ymd(today() - years(1)), "%m-%d-%Y")
+    ReportEnd <- format.Date(ymd(today()), "%m-%d-%Y")
+    
+    desk_time <- validation() %>%
+      filter(entered_between(., ReportStart, ReportEnd) &
+               ProjectType %in% c(1, 2, 3, 4, 8, 9, 12, 13)) %>%
+      select(ProjectName, PersonalID, HouseholdID, EntryDate, DateCreated) %>%
+      mutate(
+        DeskTime = difftime(floor_date(DateCreated, unit = "day"),
+                            EntryDate,
+                            units = "days"),
+        DeskTime = as.integer(floor(DeskTime))
+      ) %>%
+      select(HouseholdID,
+             PersonalID,
+             ProjectName,
+             EntryDate,
+             DateCreated,
+             DeskTime) 
+    
+    desk_time_medians <- desk_time %>%
+      group_by(ProjectName) %>%
+      summarise(MedianDeskTime = median(DeskTime)) %>%
+      ungroup() %>%
+      arrange(desc(MedianDeskTime))
+    
+    ggplot(
+      head(desk_time_medians, 10L),
+      aes(
+        x = reorder(ProjectName, MedianDeskTime),
+        y = MedianDeskTime,
+        fill = MedianDeskTime
+      )
+    ) +
+      geom_col(show.legend = FALSE) +
+      coord_flip() +
+      labs(x = "",
+           y = "Median Days") +
+      scale_fill_viridis_c(direction = -1) +
+      theme_minimal(base_size = 18)
+    
+  })
   
   output$ExitsToPHSummary <-
     renderInfoBox({
@@ -356,22 +327,22 @@ function(input, output, session) {
       SuccessfullyPlaced <- qpr_leavers() %>%
         filter(ProjectName == input$ExitsToPHProjectList &
                  ((ProjectType %in% c(3, 9, 13) &
-                   !is.na(MoveInDateAdjust)) |
-                  ProjectType %in% c(1, 2, 4, 8, 12)
-        ) &
-          # excluding non-mover-inners
-          (((DestinationGroup == "Permanent" |
-               #exited to ph or still in PSH/HP
-               is.na(ExitDate)) &
-              ProjectType %in% c(3, 9, 12) &
-              served_between(., ReportStart, ReportEnd)# PSH & HP
-          ) |
-            (
-              DestinationGroup == "Permanent" & # exited to ph
-                ProjectType %in% c(1, 2, 4, 8, 13) &
-                exited_between(., ReportStart, ReportEnd)
-            )
-          )) %>%
+                     !is.na(MoveInDateAdjust)) |
+                    ProjectType %in% c(1, 2, 4, 8, 12)
+                 ) &
+                 # excluding non-mover-inners
+                 (((DestinationGroup == "Permanent" |
+                      #exited to ph or still in PSH/HP
+                      is.na(ExitDate)) &
+                     ProjectType %in% c(3, 9, 12) &
+                     served_between(., ReportStart, ReportEnd)# PSH & HP
+                 ) |
+                   (
+                     DestinationGroup == "Permanent" & # exited to ph
+                       ProjectType %in% c(1, 2, 4, 8, 13) &
+                       exited_between(., ReportStart, ReportEnd)
+                   )
+                 )) %>%
         group_by(ProjectName) %>%
         count()
       
@@ -495,9 +466,9 @@ function(input, output, session) {
         "Transition Aged Youth" = TAY,
         "Chronic Status" = ChronicStatus,
         "Eligible for PSH (Disability in Household)" = DisabilityInHH,
-        Score,
         "Household Size" = HouseholdSize,
         "Income" = IncomeFromAnySource,
+        Score,
         HH_DQ_Issue,
         CountyGuessed
       )
@@ -576,8 +547,8 @@ function(input, output, session) {
             ProjectType %in% c(3, 13) &
               !is.na(MoveInDateAdjust) &
               is.na(ExitDate) ~ paste0("Currently Moved In (",
-                                      today() - MoveInDateAdjust,
-                                      " days)"),
+                                       today() - MoveInDateAdjust,
+                                       " days)"),
             ProjectType %in% c(3, 13) &
               is.na(MoveInDateAdjust) &
               !is.na(ExitDate) ~ "Exited No Move-In",
@@ -993,14 +964,14 @@ function(input, output, session) {
                                             "Warning"))) %>%
       arrange(Type) %>%
       unique()
-
-      datatable(guidance, 
+    
+    datatable(guidance, 
               rownames = FALSE,
               escape = FALSE,
               options = list(dom = 't',
                              paging = FALSE))
   })
-
+  
   output$dq_unsheltered_summary_table <- renderTable({
     ReportStart <- format.Date(input$unsh_dq_startdate, "%m-%d-%Y")
     ReportEnd <- format.Date(today(), "%m-%d-%Y")
@@ -1331,7 +1302,7 @@ function(input, output, session) {
     
     OverlappingEEs <- dq_overlaps() %>%
       filter(
-          ProjectName %in% c(input$providerListDQ) &
+        ProjectName %in% c(input$providerListDQ) &
           served_between(., ReportStart, ReportEnd)
       ) %>%
       mutate(
@@ -1527,8 +1498,8 @@ function(input, output, session) {
     a <- dq_main() %>%
       filter(served_between(., ReportStart, ReportEnd) &
                Issue %in% c(
-               "Incorrect Exit Destination (should be \"Rental by client, with RRH...\")",
-               "Missing RRH Project Stay or Incorrect Destination")) %>%
+                 "Incorrect Exit Destination (should be \"Rental by client, with RRH...\")",
+                 "Missing RRH Project Stay or Incorrect Destination")) %>%
       group_by(ProjectName, Issue) %>%
       summarise(Clients = n()) %>%
       arrange(desc(Clients)) %>%
@@ -1554,7 +1525,7 @@ function(input, output, session) {
     datatable(a,
               rownames = FALSE)
   })
- 
+  
   # purrr::walk(gg_nms, ~{
   #   output[[.x]] <<- renderImage({
   #     # Return a list containing the filename and alt text
@@ -1567,7 +1538,7 @@ function(input, output, session) {
     
     ggplot(data_APs(), aes(fill = category, x = providertype, y = percent)) +
       geom_bar(position = "fill",
-                stat = "identity",
+               stat = "identity",
                width = .1) +
       geom_label(
         aes(label = paste(
@@ -1582,7 +1553,7 @@ function(input, output, session) {
         fontface = "bold"
       ) +
       scale_fill_manual(values = c("#00952e", "#a11207"),
-                        guide = "none") +
+                        guide = FALSE) +
       theme_void()
   })
   
@@ -1718,99 +1689,37 @@ function(input, output, session) {
     )
   })
   
-  output$veteranActiveListEligibilityLegend<-
-    renderUI(
-      HTML(
-        paste0("<p>", pass_icon, " = Veteran eligible for all VA homeless services</p>",
-                  "<p>", fail_icon, " = Veteran not eligible for VA services</p>",
-                  "<p>", alert_icon, " = Veteran eligible for SSVF/GPD only</p>",
-                  "<p>", unknown_icon, " = VA eligibility unknown</p>"
-        )
-      )
-    )
-  
   output$VeteranActiveList <- DT::renderDataTable({
-
-    vet_active_list <- veteran_active_list() %>%
-      mutate(ListStatus = case_when(
-        ListStatus == "Inactive (Uknown/Missing)" ~ "Inactive (Unknown/Missing)",
-        is.na(ListStatus) ~ "No Status Set",
-        TRUE ~ ListStatus
-      )) %>%
-      filter(County %in% c(input$vetCounty) &
-               veteran_active_list()$ListStatus %in% c(input$vetStatus) &
-               veteran_active_list()$ChronicStatus %in% c(input$vetChronicStatus)) %>%
-      arrange(PersonalID) %>%
+    
+    active_list <- veteran_active_list() %>%
+      filter(County %in% c(input$vetCounty)) %>%
+      arrange(HouseholdID, PersonalID) %>%
       mutate(PersonalID = if_else(
         is.na(HOMESID),
         as.character(PersonalID),
         paste(PersonalID,
               "<br>HOMES:",
               HOMESID)
-      ),
-      HousingPlan = case_when(
-        ExpectedPHDate < today() ~ paste0(
-          "<span style='color:tomato;'>", HousingPlan, "</span>"),
-        ExpectedPHDate >= today() ~ paste0(
-          "<span style='color:seagreen;'>", HousingPlan, "</span>"),
-        TRUE ~ HousingPlan),
-      VAEligibilityIcon = paste(
-        case_when(
-          VAEligible == "Veteran eligible for all VA homeless services" ~ pass_icon,
-          VAEligible == "Veteran not eligible for VA services" ~ fail_icon,
-          VAEligible == "Veteran eligible for SSVF/GPD only" ~ alert_icon,
-          VAEligible == "VA eligibility unknown" |
-            is.na(VAEligible) ~ unknown_icon
-        ),
-        case_when(
-          !is.na(SSVFIneligible) &
-            SSVFIneligible != "NA" ~ paste("<br><br>", SSVFIneligible),
-          TRUE ~ ""
-        )
       )) %>%
-      group_by(PersonalID) %>%
-      mutate(
-        Enrollments = paste0(
-          if_else(
-            !is.na(PH_ProjectName), paste0(
-              "<span style='background-color:lavenderblush;'>", PH_ProjectName, "<br>", PH_TimeInProject), "", "</span>"), 
-          if_else(
-            !is.na(PH_ProjectName) & 
-              (!is.na(LH_ProjectName) | !is.na(O_ProjectName)), "<br><br>", ""), 
-          if_else(
-            !is.na(LH_ProjectName), paste0(
-              "<span style='background-color:lightgoldenrodyellow;'>", LH_ProjectName, "<br>", LH_TimeInProject), "", "</span>"),
-          if_else(
-            !is.na(LH_ProjectName) & !is.na(O_ProjectName), "<br><br>", ""), 
-          if_else(
-            !is.na(O_ProjectName), paste0(
-              "<span style='background-color:paleturquoise;'>", O_ProjectName, "<br>", O_TimeInProject), "", "</span>")
-        )
-      ) %>%
       select(
         "SSVF Responsible Provider" = SSVFServiceArea,
         "Client ID" = PersonalID,
         "Active Date" =  ActiveDateDisplay,
-        "Enrollments" = Enrollments,
-        "Eligibility" = VAEligibilityIcon,
+        "Project Name" = ProjectName,
+        "Time in Project" = TimeInProject,
+        Eligibility,
         "Most Recent Offer" = MostRecentOffer,
         "List Status" = ListStatus, 
-        "Chronic Status" = ChronicStatus,
         "Housing Track & Notes" = HousingPlan
       )
     
     datatable(
-      vet_active_list,
+      active_list,
       rownames = FALSE,
       escape = FALSE,
       filter = 'top',
-      options = list(dom = 'ltpi', 
-                     initComplete = JS(
-                       "function(settings, json) {",
-                       "$('th').css({'text-align': 'center'});",
-                       "$('td').css({'text-align': 'center'});",
-                       "}"))
-      )
+      options = list(dom = 'ltpi')
+    )
   })
   
   output$downloadVeteranActiveList <- downloadHandler(
@@ -1823,38 +1732,39 @@ function(input, output, session) {
                      County %in% c(input$vetCounty) |
                        is.na(County)
                    ) %>%
-                   mutate(DisablingCondition = enhanced_yes_no_translator(DisablingCondition)) %>%
+                   mutate(ProjectType = project_type(ProjectType),
+                          LivingSituation = living_situation(LivingSituation),
+                          Destination = living_situation(Destination),
+                          VeteranStatus = enhanced_yes_no_translator(VeteranStatus),
+                          DisablingCondition = enhanced_yes_no_translator(DisablingCondition)) %>%
                    select(
                      SSVFServiceArea,
                      County,
-                     PersonalID,
+                     PersonalID, 
                      HOMESID,
+                     ProjectType,
+                     ProjectName,
                      DateVeteranIdentified,
                      EntryDate,
+                     MoveInDateAdjust,
+                     ExitDate,
                      ListStatus,
-                     ChronicStatus,
                      VAEligible,
                      SSVFIneligible,
                      DisablingCondition,
-                     # VAMCStation,
+                     VAMCStation,
                      PHTrack,
                      ExpectedPHDate,
-                     # Destination,
-                     # OtherDestination,
-                     # ClientLocation,
+                     Destination,
+                     OtherDestination,
+                     ClientLocation,
                      AgeAtEntry,
-                     LH_ProjectName,
-                     LH_TimeInProject,
-                     O_ProjectName,
-                     O_TimeInProject,
-                     PH_ProjectName,
-                     PH_TimeInProject,
-                     # VeteranStatus,
-                     # HouseholdSize,
+                     VeteranStatus,
+                     HouseholdSize,
                      Notes,
                      ActiveDate,
-                     # DaysActive,
-                     # Eligibility,
+                     DaysActive,
+                     Eligibility,
                      MostRecentOffer,
                      HousingPlan
                    ) %>% unique(), path = file)
@@ -1902,9 +1812,7 @@ function(input, output, session) {
   output$cocDQErrorTypes <- renderPlot(dq_plot_errors)
   output$cocDQWarningTypes <- renderPlot(dq_plot_warnings)
   output$cocEligibility <- renderPlot(dq_plot_eligibility)
-  output$dq_plot_hh_no_spdat <- renderPlot(dq_plot_hh_no_spdat)
-  output$dq_plot_outstanding_referrals <- renderPlot(dq_plot_outstanding_referrals)
-
+  
   output$unshIncorrectResPriorTable <- renderTable({
     ReportStart <- format.Date(input$unsh_dq_startdate, "%m-%d-%Y")
     ReportEnd <- format.Date(ymd(meta_HUDCSV_Export_End), "%m-%d-%Y")
@@ -1924,7 +1832,7 @@ function(input, output, session) {
       )
     ResPrior
   }) 
-   
+  
   output$unshIncorrectResPrior <- renderUI({
     ReportStart <- format.Date(input$unsh_dq_startdate, "%m-%d-%Y")
     ReportEnd <- format.Date(ymd(meta_HUDCSV_Export_End), "%m-%d-%Y")
@@ -2209,7 +2117,7 @@ function(input, output, session) {
     
     overlaps <- unsh_overlaps() %>%
       filter(DefaultProvider == input$unshDefaultProvidersList &
-          served_between(., ReportStart, ReportEnd)
+               served_between(., ReportStart, ReportEnd)
       ) %>%
       mutate(
         PersonalID = format(PersonalID, digits = NULL),
@@ -2467,7 +2375,7 @@ function(input, output, session) {
                 options = list(dom = 'ltpi')) %>%
         formatCurrency("Amount")
       
-    
+      
     })
   
   output$HPSpending <-
@@ -2974,5 +2882,7 @@ function(input, output, session) {
               project during the reporting period")
     
   })
+  
+  Your application server logic 
   
 }
