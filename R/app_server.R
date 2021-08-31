@@ -63,7 +63,7 @@ app_server <- function( input, output, session ) {
     
     next_thing_due <- tribble(
       ~ DueDate, ~ Event,
-      ymd(hc_project_eval_docs_due), "Projects submit program documents to evidence 
+      ymd(hc$project_eval_docs_due), "Projects submit program documents to evidence 
       best practices and CE Prioritization compliance",
       ymd("20210506"), "All HMIS data corrections must be complete by 11:59pm",
       ymd("20210507"), "Project Evaluation data is saved as final data for scoring",
@@ -84,9 +84,9 @@ app_server <- function( input, output, session ) {
     list(
       h2("2021 BoS CoC Competition: Project Evaluation"), 
       h4(paste("Fixed Date Range:", 
-               format.Date(hc_project_eval_start, "%B %d, %Y"), 
+               format.Date(hc$project_eval_start, "%B %d, %Y"), 
                "to",
-               format.Date(hc_project_eval_end, "%B %d, %Y"))),
+               format.Date(hc$project_eval_end, "%B %d, %Y"))),
       # h4(strong("THE DATA ON THIS TAB DOES NOT SHOW CHANGES MADE ON OR AFTER
       #           5-7-2021.")),
       h4(input$pe_provider),
@@ -174,7 +174,7 @@ app_server <- function( input, output, session ) {
   output$headerCocDQ <- renderUI({
     list(h2("System-wide Data Quality"),
          h4(
-           paste(format(hc_check_dq_back_to, "%m-%d-%Y"),
+           paste(format(hc$check_dq_back_to, "%m-%d-%Y"),
                  "through",
                  format(meta_HUDCSV_Export_End, "%m-%d-%Y"))
          ))
@@ -1405,7 +1405,7 @@ app_server <- function( input, output, session ) {
     })
   
   output$cocOverlap <- DT::renderDataTable({
-    ReportStart <- format.Date(hc_check_dq_back_to, "%m-%d-%Y")
+    ReportStart <- format.Date(hc$check_dq_back_to, "%m-%d-%Y")
     ReportEnd <- format.Date(today(), "%m-%d-%Y")
     
     a <- dq_overlaps() %>%
@@ -1474,7 +1474,7 @@ app_server <- function( input, output, session ) {
   })
   
   output$cocLongStayers <- DT::renderDataTable({
-    ReportStart <- format.Date(hc_check_dq_back_to, "%m-%d-%Y")
+    ReportStart <- format.Date(hc$check_dq_back_to, "%m-%d-%Y")
     ReportEnd <- format.Date(today(), "%m-%d-%Y")
     
     a <- dq_main() %>%
@@ -1492,7 +1492,7 @@ app_server <- function( input, output, session ) {
   })
   
   output$cocRRHDestination <- DT::renderDataTable({
-    ReportStart <- format.Date(hc_check_dq_back_to, "%m-%d-%Y")
+    ReportStart <- format.Date(hc$check_dq_back_to, "%m-%d-%Y")
     ReportEnd <- format.Date(today(), "%m-%d-%Y")
     
     a <- dq_main() %>%
