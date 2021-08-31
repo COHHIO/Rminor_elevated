@@ -233,7 +233,7 @@ app_ui <- function(request) {
                 dateRangeInput(
                   "vaccine_status_daterange",
                   "Date Range",
-                  start = ymd(hc_bos_start_vaccine_data),
+                  start = ymd(hc$bos_start_vaccine_data),
                   end = today(),
                   min = meta_HUDCSV_Export_Start,
                   format = "mm/dd/yyyy",

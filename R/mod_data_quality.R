@@ -33,7 +33,7 @@ mod_data_quality_ui <- function(id){
         inputId = ns("dq_startdate"),
         label = "Report Start Date",
         format = "mm/dd/yyyy",
-        value = hc_check_dq_back_to,
+        value = hc$check_dq_back_to,
         min = meta_HUDCSV_Export_Start,
         width = "25%"
       ),
@@ -121,7 +121,7 @@ mod_data_quality_ui <- function(id){
               inputId = ns("dq_region_startdate"),
               label = "Report Start Date",
               format = "mm/dd/yyyy",
-              value = ymd(hc_check_dq_back_to),
+              value = ymd(hc$check_dq_back_to),
               width = "25%"
             ),
             width = 12
@@ -155,7 +155,7 @@ mod_data_quality_ui <- function(id){
         inputId = ns("unsh_dq_startdate"),
         label = "Report Start Date",
         format = "mm/dd/yyyy",
-        value = ymd(hc_check_dq_back_to),
+        value = ymd(hc$check_dq_back_to),
         width = "25%"
       ),
       width = 12
