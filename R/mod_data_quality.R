@@ -44,7 +44,7 @@ mod_data_quality_ui <- function(id){
     fluidRow(
       uiOutput(ns("DQHHIssues")),
       uiOutput(ns("DQDuplicateEEs")),
-      uiOutput(ns("DQIncorrectEEType")),
+      # DQIncorrectEEType SP only
       uiOutput(ns("DQMissingLocation")),
       uiOutput(ns("DQPATHMissingContact"))
     ),
@@ -161,7 +161,7 @@ mod_data_quality_ui <- function(id){
       width = 12
     )),
     fluidRow(
-      uiOutput(ns("unshIncorrectEEType")),
+      # unsIncorrectEEType SP only
       uiOutput(ns("unshIncorrectResPrior")),
       uiOutput(ns("unshMissingCounty")),
       uiOutput(ns("unshOverlaps")),
