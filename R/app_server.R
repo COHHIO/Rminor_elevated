@@ -1607,54 +1607,7 @@ app_server <- function( input, output, session ) {
     }
   })
   
-  output$DQIncorrectEETypeTable <- renderTable({
-    ReportStart <- format.Date(input$dq_startdate, "%m-%d-%Y")
-    ReportEnd <- format.Date(ymd(meta_HUDCSV$Export_End), "%m-%d-%Y")
-    EEType <- dq_main() %>%
-      filter(
-        Issue == "Incorrect Entry Exit Type" &
-          ProjectName %in% c(input$providerListDQ) &
-          served_between(., ReportStart, ReportEnd)
-      ) %>%
-      mutate(
-        PersonalID = format(PersonalID, digits = NULL),
-        EntryDate = format(EntryDate, "%m-%d-%Y")
-      ) %>%
-      select(
-        "Client ID" = PersonalID,
-        "Entry Date" = EntryDate
-      )
-    EEType
-  }) 
   
-  output$DQIncorrectEEType <- renderUI({
-    ReportStart <- format.Date(input$dq_startdate, "%m-%d-%Y")
-    ReportEnd <- format.Date(ymd(meta_HUDCSV$Export_End), "%m-%d-%Y")
-    
-    EEType <- dq_main() %>%
-      filter(
-        Issue == "Incorrect Entry Exit Type" &
-          ProjectName %in% c(input$providerListDQ) &
-          served_between(., ReportStart, ReportEnd)
-      ) 
-    
-    if (nrow(EEType) > 0) {
-      box(
-        id = "DQEEType",
-        title = "Incorrect Entry Exit Type",
-        status = "warning",
-        solidHeader = TRUE,
-        HTML(
-          "If you are not sure which Entry Exit Type you should be using for 
-          your provider, please contact the HMIS team."
-        ),
-        tableOutput("DQIncorrectEETypeTable")
-      )
-    }
-    else {
-      
-    }
-  })
   
   output$DQErrors <- DT::renderDataTable({
     ReportStart <- format.Date(input$dq_startdate, "%m-%d-%Y")
@@ -1875,62 +1828,8 @@ app_server <- function( input, output, session ) {
     }
   })
   
-  output$unshIncorrectEETypeTable <- renderTable({
-    ReportStart <- format.Date(input$unsh_dq_startdate, "%m-%d-%Y")
-    ReportEnd <- format.Date(ymd(meta_HUDCSV$Export_End), "%m-%d-%Y")
-    EEType <- dq_unsheltered() %>%
-      filter(
-        Issue == "Incorrect Entry Exit Type" &
-          DefaultProvider == input$unshDefaultProvidersList &
-          served_between(., ReportStart, ReportEnd)
-      ) %>%
-      mutate(
-        PersonalID = format(PersonalID, digits = NULL),
-        EntryDate = format(EntryDate, "%m-%d-%Y")
-      ) %>%
-      select(
-        "Client ID" = PersonalID,
-        "Entry Date" = EntryDate
-      )
-    EEType
-  }) 
   
-  output$unshIncorrectEEType <- renderUI({
-    ReportStart <- format.Date(input$unsh_dq_startdate, "%m-%d-%Y")
-    ReportEnd <- format.Date(ymd(meta_HUDCSV$Export_End), "%m-%d-%Y")
-    EEType <- dq_unsheltered() %>%
-      filter(
-        Issue == "Incorrect Entry Exit Type" &
-          DefaultProvider == input$unshDefaultProvidersList &
-          served_between(., ReportStart, ReportEnd)
-      ) %>%
-      mutate(
-        PersonalID = format(PersonalID, digits = NULL),
-        EntryDate = format(EntryDate, "%m-%d-%Y"),
-        ExitDate = format(ExitDate, "%m-%d-%Y")
-      ) %>%
-      select(
-        "Client ID" = PersonalID,
-        "Entry Date" = EntryDate,
-        "Exit Date" = ExitDate
-      )
-    if (nrow(EEType) > 0) {
-      box(
-        id = "unshEEType",
-        title = "Incorrect Entry Exit Type",
-        status = "danger",
-        solidHeader = TRUE,
-        HTML(
-          "All households entered into the Unsheltered provider should have
-          an Entry Exit Type of \"Standard\""
-        ),
-        tableOutput("unshIncorrectEETypeTable")
-      )
-    }
-    else {
-      
-    }
-  })
+  
   
   output$unshDuplicateEEsTable <- renderTable({
     ReportStart <- format.Date(input$unsh_dq_startdate, "%m-%d-%Y")
@@ -2883,6 +2782,6 @@ app_server <- function( input, output, session ) {
     
   })
   
-  Your application server logic 
+  
   
 }
