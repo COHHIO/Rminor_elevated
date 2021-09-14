@@ -32,7 +32,7 @@ mod_sidebar_ui <- function(id){
         ),
         bs4Dash::bs4SidebarMenuItem(
           text = "Client Counts",
-          tabName = "client_count", #currentProviderLevel
+          tabName = "client_counts", #currentProviderLevel
           icon = shiny::icon("users") 
         ),
         bs4Dash::bs4SidebarMenuItem(

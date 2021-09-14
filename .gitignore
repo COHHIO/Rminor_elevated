@@ -4,7 +4,7 @@
 .Renviron
 
 golem_commands.R
-
 inst/auth/
-
 data/
+inst/auth
+.Renviron

@@ -6,3 +6,4 @@ dev_history.R
 $run_dev.*
 ^README\.Rmd$
 ^LICENSE\.md$
+^\.httr-oauth$

@@ -33,8 +33,8 @@ mod_data_quality_ui <- function(id){
         inputId = ns("dq_startdate"),
         label = "Report Start Date",
         format = "mm/dd/yyyy",
-        value = hc$check_dq_back_to,
-        min = meta_HUDCSV$Export_Start,
+        value = rm_dates$hc$check_dq_back_to,
+        min = rm_dates$meta_HUDCSV$Export_Start,
         width = "25%"
       ),
       width = 12
@@ -121,7 +121,7 @@ mod_data_quality_ui <- function(id){
               inputId = ns("dq_region_startdate"),
               label = "Report Start Date",
               format = "mm/dd/yyyy",
-              value = ymd(hc$check_dq_back_to),
+              value = ymd(rm_dates$hc$check_dq_back_to),
               width = "25%"
             ),
             width = 12
@@ -155,7 +155,7 @@ mod_data_quality_ui <- function(id){
         inputId = ns("unsh_dq_startdate"),
         label = "Report Start Date",
         format = "mm/dd/yyyy",
-        value = ymd(hc$check_dq_back_to),
+        value = ymd(rm_dates$hc$check_dq_back_to),
         width = "25%"
       ),
       width = 12
@@ -368,13 +368,13 @@ mod_data_quality_ui <- function(id){
           label = "Report Start Month",
           dateFormat = "MM yyyy",
           max =
-            ymd(floor_date(meta_HUDCSV$Export_Date, unit = "month") - days(1)),
+            ymd(floor_date(rm_dates$meta_HUDCSV$Export_Date, unit = "month") - days(1)),
           min =
-            ymd(floor_date(meta_HUDCSV$Export_Start, unit = "month")),
+            ymd(floor_date(rm_dates$meta_HUDCSV$Export_Start, unit = "month")),
           view = "month",
           value =
             ymd(floor_date(
-              meta_HUDCSV$Export_Date - days(182), unit = "month"
+              rm_dates$meta_HUDCSV$Export_Date - days(182), unit = "month"
             )),
           minView = "months",
           addon = "none",
