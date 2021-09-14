@@ -12,3 +12,4 @@ tests/
 .httr-oauth
 golem_commands.R
 inst/auth
+.Renviron
