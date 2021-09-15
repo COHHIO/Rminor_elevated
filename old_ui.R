@@ -73,7 +73,7 @@ old_ui <- function(request) {
         HTML(
           paste0(
             "<br>&emsp;Data last refreshed:&emsp;<br>&emsp;",
-            format(rm_dates$meta_HUDCSV$Export_Date, "%m-%d-%Y %I:%M %p")
+            format(rm_dates()$meta_HUDCSV$Export_Date, "%m-%d-%Y %I:%M %p")
             ,
             "<p><p>&emsp;" # add short message here if you want <-
           )
@@ -140,7 +140,7 @@ old_ui <- function(request) {
               dateRangeInput(
                 "dateRangeCount",
                 "Date Range",
-                min = rm_dates$meta_HUDCSV$Export_Start,
+                min = rm_dates()$meta_HUDCSV$Export_Start,
                 format = "mm/dd/yyyy",
                 width = 300
               ),
@@ -233,9 +233,9 @@ old_ui <- function(request) {
                 dateRangeInput(
                   "vaccine_status_daterange",
                   "Date Range",
-                  start = ymd(rm_dates$hc$bos_start_vaccine_data),
+                  start = ymd(rm_dates()$hc$bos_start_vaccine_data),
                   end = today(),
-                  min = rm_dates$meta_HUDCSV$Export_Start,
+                  min = rm_dates()$meta_HUDCSV$Export_Start,
                   format = "mm/dd/yyyy",
                   width = 300
                 ),
@@ -277,14 +277,14 @@ old_ui <- function(request) {
                 airDatepickerInput(
                   inputId = "utilizationDate",
                   label = "Click to Choose a Month",
-                  max = ymd(floor_date(rm_dates$meta_HUDCSV$Export_Date, unit = "month") - days(1)),
+                  max = ymd(floor_date(rm_dates()$meta_HUDCSV$Export_Date, unit = "month") - days(1)),
                   min = ymd(floor_date(ymd(
-                    rm_dates$meta_HUDCSV$Export_End
+                    rm_dates()$meta_HUDCSV$Export_End
                   ), "month") - years(2) + days(1)),
                   dateFormat = "MM yyyy",
                   view = "month",
                   value =
-                    ymd(floor_date(rm_dates$meta_HUDCSV$Export_Date, unit = "month") - days(1)),
+                    ymd(floor_date(rm_dates()$meta_HUDCSV$Export_Date, unit = "month") - days(1)),
                   minView = "months",
                   addon = "none",
                   autoClose = TRUE,
@@ -424,7 +424,7 @@ old_ui <- function(request) {
                 "Date Range",
                 start = floor_date(today() - days(31), "year"),
                 end = today(),
-                min = rm_dates$meta_HUDCSV$Export_Start,
+                min = rm_dates()$meta_HUDCSV$Export_Start,
                 format = "mm/dd/yyyy",
                 width = 300
               )
@@ -466,7 +466,7 @@ old_ui <- function(request) {
                 "Date Range",
                 start = floor_date(today() - days(31), "year"),
                 end = today(),
-                min = rm_dates$meta_HUDCSV$Export_Start,
+                min = rm_dates()$meta_HUDCSV$Export_Start,
                 format = "mm/dd/yyyy",
                 width = 300
               )

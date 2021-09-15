@@ -6,10 +6,7 @@
 #' @inheritDotParams DT::datatable
 #' @param ... \code{(named arguments)} passed on to \link[DT]{datatable}
 #' @export
-#' @importFrom rlang fn_fmls call_args dots_list exec `!!!`
-#' @importFrom tidyselect starts_with
-#' @importFrom purrr list_modify
-#' @importFrom DT datatable
+
  
 qpr_datatable <- function(.data,
                           .replace = FALSE,
@@ -39,6 +36,39 @@ qpr_datatable <- function(.data,
     .dt_opts[[i]] <- eval(.dt_opts[[i]])
   }
   rlang::exec(DT::datatable, !!!.dt_opts)
+}
+
+
+
+#' @title DT Datatable with some helpful defaults
+#'
+#' @inheritParams DT::datatable
+#' @inheritDotParams DT::datatable
+#'
+#' @return \code{(shiny.tag)}
+#' @export
+
+rm_datatable <- function(data,
+                         rownames = FALSE,
+                         options = list(dom = 'Bfrtip',
+                                        buttons = c('copy', 'excel', 'csvHtml5')),
+                         filter = list(position = 'top',
+                                       clear = TRUE,
+                                       plain = FALSE),
+                         extensions = "Buttons",
+                         style = "bootstrap4",
+                         elementId = NULL,
+                         ...) {
+  DT::datatable(
+    data,
+    rownames = rownames,
+    filter = filter,
+    options = options,
+    extensions = extensions,
+    style = style,
+    elementId = elementId,
+    ...
+  )
 }
 
 

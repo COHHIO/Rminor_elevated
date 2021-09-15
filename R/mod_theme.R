@@ -17,13 +17,13 @@ mod_theme_ui <- function(id){
 #' theme Server Functions
 #'
 #' @noRd 
-mod_theme_server <- function(id, dark_mode){
+mod_theme_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
  
-    observeEvent(dark_mode(), {
+    observeEvent(active$dark_mode, {
       # Switch to dark color Theme
-      if (isTRUE(dark_mode())) {
+      if (isTRUE(active$dark_mode)) {
         # Sass changes here, see bslib
         
       }
