@@ -1,3 +1,18 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+data
+rsconnect
+.Rprofile
+comparisons
+tests/
+*.jpg
+.DS_Store
+.httr-oauth
+golem_commands.R
+inst/auth
+.Renviron
 
 .Rproj.user/
 
