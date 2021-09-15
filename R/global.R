@@ -39,12 +39,11 @@ list2env(create_accessors("data"), .GlobalEnv)
 
 if (exists("validation")) {
   projects <- sort(validation()$ProjectName) |> unique()
+  
   desk_time_providers <- validation() |>
-    dplyr::filter(entered_between(.,
-                                  format.Date(ymd(today() - years(1)), "%m-%d-%Y"),
-                                  format.Date(ymd(today()), "%m-%d-%Y")) &
-                    ProjectType %in% c(1, 2, 3, 4, 8, 9, 12, 13) &
-                    ProjectName != "Non-HMIS Shelter Clients") |>
+    HMIS::entered_between(Sys.Date() - lubridate::years(1),
+                     Sys.Date()) |> 
+    dplyr::filter(ProjectType %in% c(1, 2, 3, 4, 8, 9, 12, 13)) |>
     dplyr::select(ProjectName) |> unique()
   
 }
