@@ -26,30 +26,29 @@ Sys.setenv(TZ = "America/New_York")
 # library(viridis)
 # library(HMIS)
 # library(feather)
-
-rds_token <- file.path("inst","auth","dbtoken.rds")
-if (!file.exists(rds_token)) {
-  token <- rdrop2::drop_auth(key = Sys.getenv("db_key"), secret = Sys.getenv("db_secret"), cache = FALSE)
-  saveRDS(token, rds_token)
-} else {
-  rdrop2::drop_auth(rdstoken = rds_token)
-}
-
-
-
+db_auth()
 # Create accessor functions
-list2env(create_accessors("data"))
+list2env(create_accessors("data"), .GlobalEnv)
 
-# 
-# projects <- sort(validation()$ProjectName) |> unique()
-# desk_time_providers <- validation() |>
-#   dplyr::filter(entered_between(.,
-#                          format.Date(ymd(today() - years(1)), "%m-%d-%Y"),
-#                          format.Date(ymd(today()), "%m-%d-%Y")) &
-#            ProjectType %in% c(1, 2, 3, 4, 8, 9, 12, 13) &
-#            ProjectName != "Non-HMIS Shelter Clients") |>
-#   dplyr::select(ProjectName) |> unique()
-# 
+
+
+
+
+
+
+
+if (exists("validation")) {
+  projects <- sort(validation()$ProjectName) |> unique()
+  desk_time_providers <- validation() |>
+    dplyr::filter(entered_between(.,
+                                  format.Date(ymd(today() - years(1)), "%m-%d-%Y"),
+                                  format.Date(ymd(today()), "%m-%d-%Y")) &
+                    ProjectType %in% c(1, 2, 3, 4, 8, 9, 12, 13) &
+                    ProjectName != "Non-HMIS Shelter Clients") |>
+    dplyr::select(ProjectName) |> unique()
+  
+}
+  
 # tab_choices <- unique(regions()$RegionName) |> 
 # {list(
 #   spdat1 = list(

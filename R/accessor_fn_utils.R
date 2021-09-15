@@ -1,25 +1,44 @@
-accessor = function(x = as.character(match.call()[[1]]),
-                    path = "data/db",
-                    ...) {
-  .file <-
-    list.files(path,
-               pattern = paste0("^", x, "\\."),
-               full.names = TRUE)
-  if (length(.file) > 1)
-    rlang::warn(paste0(length(.file), " files found. Loading the first."))
-  
-  UU::file_fn(.file[[1]])(.file[[1]])
-}
+accessor_create <- function(.x) rlang::new_function(args = 
+                      rlang::pairlist2(
+                        path = rlang::expr(!!.x),
+                        dropbox_folder = file.path("RminorElevated"),
+                        ... = ,
+                      ),
+                    body = base::quote({
+                      if (file.info(path)$mtime < lubridate::floor_date(Sys.time(), "day"))
+                        rdrop2::drop_download(file.path(dropbox_folder, basename(path)), local_path = path)
+                      UU::file_fn(path)(path, ...)
+                      
+                    }))
 
 create_accessors <- function(path = "data") {
-  files <- list.files(path, full.names = TRUE) |> 
-    {\(x) {rlang::set_names(x, stringr::str_extract(basename(x), ".*(?=\\.)"))}}()
-  purrr::map(files, ~rlang::new_function(args = 
-                                           rlang::pairlist2(
-                                             path = .x,
-                                             ... = ,
-                                           ),
-                                         body = base::quote({
-                                           UU::file_fn(path)(path, ...)
-                                         })))
+  files <- UU::list.files2(path)
+  db_files <- rdrop2::drop_dir("RminorElevated") |> 
+    dplyr::mutate(client_modified = lubridate::as_datetime(client_modified, tz = Sys.timezone()),
+                  file_time = file.info(file.path(path, name))$mtime,
+                  needs_update = file_time < client_modified) 
+  
+  files_to_download <- dplyr::filter(db_files, !name %in% basename(files) | needs_update)
+  # If no files, download them
+  if (nrow(files_to_download)) {
+    if (!dir.exists(path))
+      UU::mkpath(path)
+    slider::slide(files_to_download, ~rdrop2::drop_download(.x$path_display, file.path(path, .x$name), overwrite = TRUE))
+  }
+  files <- UU::list.files2(path)
+  purrr::map(files, accessor_create)
+}
+
+#' @title Authorize Dropbox
+#'
+#' @param db_token \code{(character)} path to Dropbox token saved as RDS
+#' @export
+db_auth <- function(db_token = file.path("inst","auth","db_token.rds")) {
+  if (!file.exists(db_token)) {
+    token <- rdrop2::drop_auth(key = Sys.getenv("db_key"), secret = Sys.getenv("db_secret"), cache = FALSE)
+    saveRDS(token, db_token)
+  } else {
+    rdrop2::drop_auth(rdstoken = db_token)
+  }
+  
 }

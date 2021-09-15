@@ -27,6 +27,8 @@ RoxygenNote: 7.1.1.9001
 URL: https://github.com/COHHIO/RminorElevated
 BugReports: https://github.com/COHHIO/RminorElevated/issues
 Collate: 
+    'accessor_fn_utils.R'
+    'utils_helpers.R'
     'app_config.R'
     'app_server.R'
     'app_ui.R'
@@ -55,4 +57,4 @@ Collate:
     'qpr_expr_spdat1.R'
     'qpr_expr_spdat2.R'
     'run_app.R'
-    'utils_helpers.R'
+    
