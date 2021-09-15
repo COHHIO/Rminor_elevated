@@ -7,11 +7,16 @@
 app_server <- function( input, output, session ) {
 
   # Inputs needed in submodules
-  active_tab <- eventReactive(input$active_tab, {input$active_tab})
-  dark_mode <- eventReactive(input$dark_mode, {input$dark_mode})
+  active <<- reactiveValues()
+  observe({
+    active$ui <- paste0("mod_body_", input$active_tab, "_ui")
+    active$server <-  paste0("mod_body_", input$active_tab, "_server")
+    active$tab <- input$active_tab
+    active$dark_mode <- input$dark_mode
+  })
   # Top-level Modules
   mod_navbar_server("navbar")
   mod_sidebar_server("sidebar")
-  mod_body_server("body", active_tab = active_tab)
-  mod_theme_server("color_theme", dark_mode = dark_mode)
+  mod_body_server("body")
+  mod_theme_server("color_theme")
 }

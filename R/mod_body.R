@@ -17,22 +17,16 @@ mod_body_ui <- function(id){
 #' body Server Functions
 #'
 #' @noRd 
-mod_body_server <- function(id, active_tab){
+mod_body_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
   
-    active <<- reactiveValues()
-    observe({
-      
-        active$ui <- paste0("mod_body_", active_tab(), "_ui")
-        active$server <-  paste0("mod_body_", active_tab(), "_server")
-        active$tab <- active_tab()
-    })
+    
     e <- environment()
       
     output$bodyui <- renderUI({
       req(active$ui)
-      message("Tab: ", active_tab())
+      message("Tab: ", active$tab)
       if (exists(active$server))
         rlang::exec(active$server, id = paste0("body_", isolate(active$tab)), .env = e)
       # Render the body UIs here

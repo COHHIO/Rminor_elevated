@@ -28,7 +28,7 @@ old_server <- function( input, output, session ) {
   
   output$headerPrioritization <- renderUI({
     list(h2("Prioritization Report"),
-         h4("Literally Homeless Clients as of", rm_dates$meta_HUDCSV$Export_End))
+         h4("Literally Homeless Clients as of", rm_dates()$meta_HUDCSV$Export_End))
   })
   
   output$headerCurrent <- renderUI({
@@ -39,7 +39,7 @@ old_server <- function( input, output, session ) {
   output$headerVaccine <- renderUI({
     list(h2("COVID-19 Vaccine Distribution"),
          h3("Second Dose Logistics"),
-         h4(paste("Data Last Refreshed:", rm_dates$meta_HUDCSV$Export_Date)))
+         h4(paste("Data Last Refreshed:", rm_dates()$meta_HUDCSV$Export_Date)))
   })
   
   output$headerVaccineStatus <- renderUI({
@@ -63,7 +63,7 @@ old_server <- function( input, output, session ) {
     
     next_thing_due <- tribble(
       ~ DueDate, ~ Event,
-      ymd(rm_dates$hc$project_eval_docs_due), "Projects submit program documents to evidence 
+      ymd(rm_dates()$hc$project_eval_docs_due), "Projects submit program documents to evidence 
       best practices and CE Prioritization compliance",
       ymd("20210506"), "All HMIS data corrections must be complete by 11:59pm",
       ymd("20210507"), "Project Evaluation data is saved as final data for scoring",
@@ -84,9 +84,9 @@ old_server <- function( input, output, session ) {
     list(
       h2("2021 BoS CoC Competition: Project Evaluation"), 
       h4(paste("Fixed Date Range:", 
-               format.Date(rm_dates$hc$project_eval_start, "%B %d, %Y"), 
+               format.Date(rm_dates()$hc$project_eval_start, "%B %d, %Y"), 
                "to",
-               format.Date(rm_dates$hc$project_eval_end, "%B %d, %Y"))),
+               format.Date(rm_dates()$hc$project_eval_end, "%B %d, %Y"))),
       # h4(strong("THE DATA ON THIS TAB DOES NOT SHOW CHANGES MADE ON OR AFTER
       #           5-7-2021.")),
       h4(input$pe_provider),
@@ -107,7 +107,7 @@ old_server <- function( input, output, session ) {
          h4(paste(
            format(input$dq_startdate, "%m-%d-%Y"),
            "to",
-           format(rm_dates$meta_HUDCSV$Export_Date, "%m-%d-%Y")
+           format(rm_dates()$meta_HUDCSV$Export_Date, "%m-%d-%Y")
          )))
   })
   
@@ -167,16 +167,16 @@ old_server <- function( input, output, session ) {
          h4(paste(
            format(input$unsh_dq_startdate, "%m-%d-%Y"),
            "to",
-           format(rm_dates$meta_HUDCSV$Export_Date, "%m-%d-%Y")
+           format(rm_dates()$meta_HUDCSV$Export_Date, "%m-%d-%Y")
          )))
   })
   
   output$headerCocDQ <- renderUI({
     list(h2("System-wide Data Quality"),
          h4(
-           paste(format(rm_dates$hc$check_dq_back_to, "%m-%d-%Y"),
+           paste(format(rm_dates()$hc$check_dq_back_to, "%m-%d-%Y"),
                  "through",
-                 format(rm_dates$meta_HUDCSV$Export_End, "%m-%d-%Y"))
+                 format(rm_dates()$meta_HUDCSV$Export_End, "%m-%d-%Y"))
          ))
   })
   
@@ -186,7 +186,7 @@ old_server <- function( input, output, session ) {
          h4(paste(
            format(input$dq_region_startdate, "%m-%d-%Y"),
            "to",
-           format(rm_dates$meta_HUDCSV$Export_Date, "%m-%d-%Y")
+           format(rm_dates()$meta_HUDCSV$Export_Date, "%m-%d-%Y")
          )))
   })
   
@@ -1405,7 +1405,7 @@ old_server <- function( input, output, session ) {
     })
   
   output$cocOverlap <- DT::renderDataTable({
-    ReportStart <- format.Date(rm_dates$hc$check_dq_back_to, "%m-%d-%Y")
+    ReportStart <- format.Date(rm_dates()$hc$check_dq_back_to, "%m-%d-%Y")
     ReportEnd <- format.Date(today(), "%m-%d-%Y")
     
     a <- dq_overlaps() %>%
@@ -1422,7 +1422,7 @@ old_server <- function( input, output, session ) {
   
   output$cocUnshelteredEntriesByMonth <- renderPlotly({
     ReportStart <-  format.Date(input$unshEntriesByMonth_ReportStart, "%m-%d-%Y")
-    ReportEnd <-  format.Date(rm_dates$meta_HUDCSV$Export_Date, "%m-%d-%Y")
+    ReportEnd <-  format.Date(rm_dates()$meta_HUDCSV$Export_Date, "%m-%d-%Y")
     
     monthyears <- unsheltered_by_month() %>%
       arrange(EntryDate) %>%
@@ -1474,7 +1474,7 @@ old_server <- function( input, output, session ) {
   })
   
   output$cocLongStayers <- DT::renderDataTable({
-    ReportStart <- format.Date(rm_dates$hc$check_dq_back_to, "%m-%d-%Y")
+    ReportStart <- format.Date(rm_dates()$hc$check_dq_back_to, "%m-%d-%Y")
     ReportEnd <- format.Date(today(), "%m-%d-%Y")
     
     a <- dq_main() %>%
@@ -1492,7 +1492,7 @@ old_server <- function( input, output, session ) {
   })
   
   output$cocRRHDestination <- DT::renderDataTable({
-    ReportStart <- format.Date(rm_dates$hc$check_dq_back_to, "%m-%d-%Y")
+    ReportStart <- format.Date(rm_dates()$hc$check_dq_back_to, "%m-%d-%Y")
     ReportEnd <- format.Date(today(), "%m-%d-%Y")
     
     a <- dq_main() %>%
@@ -1611,7 +1611,7 @@ old_server <- function( input, output, session ) {
   
   output$DQErrors <- DT::renderDataTable({
     ReportStart <- format.Date(input$dq_startdate, "%m-%d-%Y")
-    ReportEnd <- format.Date(rm_dates$meta_HUDCSV$Export_Date, "%m-%d-%Y")
+    ReportEnd <- format.Date(rm_dates()$meta_HUDCSV$Export_Date, "%m-%d-%Y")
     
     DQErrors <- dq_main() %>%
       filter(
@@ -1726,7 +1726,7 @@ old_server <- function( input, output, session ) {
   
   output$DQWarnings <- DT::renderDataTable({
     ReportStart <- format.Date(input$dq_startdate, "%m-%d-%Y")
-    ReportEnd <- format.Date(rm_dates$meta_HUDCSV$Export_Date, "%m-%d-%Y")
+    ReportEnd <- format.Date(rm_dates()$meta_HUDCSV$Export_Date, "%m-%d-%Y")
     
     DQWarnings <- dq_main() %>%
       filter(
@@ -1768,7 +1768,7 @@ old_server <- function( input, output, session ) {
   
   output$unshIncorrectResPriorTable <- renderTable({
     ReportStart <- format.Date(input$unsh_dq_startdate, "%m-%d-%Y")
-    ReportEnd <- format.Date(ymd(rm_dates$meta_HUDCSV$Export_End), "%m-%d-%Y")
+    ReportEnd <- format.Date(ymd(rm_dates()$meta_HUDCSV$Export_End), "%m-%d-%Y")
     ResPrior <- dq_unsheltered() %>%
       filter(
         Issue == "Wrong Provider (Not Unsheltered)" &
@@ -1788,7 +1788,7 @@ old_server <- function( input, output, session ) {
   
   output$unshIncorrectResPrior <- renderUI({
     ReportStart <- format.Date(input$unsh_dq_startdate, "%m-%d-%Y")
-    ReportEnd <- format.Date(ymd(rm_dates$meta_HUDCSV$Export_End), "%m-%d-%Y")
+    ReportEnd <- format.Date(ymd(rm_dates()$meta_HUDCSV$Export_End), "%m-%d-%Y")
     ResPrior <- dq_unsheltered() %>%
       filter(
         Issue == "Wrong Provider (Not Unsheltered)" &
@@ -1833,7 +1833,7 @@ old_server <- function( input, output, session ) {
   
   output$unshDuplicateEEsTable <- renderTable({
     ReportStart <- format.Date(input$unsh_dq_startdate, "%m-%d-%Y")
-    ReportEnd <- format.Date(ymd(rm_dates$meta_HUDCSV$Export_End), "%m-%d-%Y")
+    ReportEnd <- format.Date(ymd(rm_dates()$meta_HUDCSV$Export_End), "%m-%d-%Y")
     DuplicateEEs <- dq_unsheltered() %>%
       filter(
         Issue == "Duplicate Entry Exits" &
@@ -1855,7 +1855,7 @@ old_server <- function( input, output, session ) {
   
   output$unshDuplicateEEs <- renderUI({
     ReportStart <- format.Date(input$unsh_dq_startdate, "%m-%d-%Y")
-    ReportEnd <- format.Date(ymd(rm_dates$meta_HUDCSV$Export_End), "%m-%d-%Y")
+    ReportEnd <- format.Date(ymd(rm_dates()$meta_HUDCSV$Export_End), "%m-%d-%Y")
     DuplicateEEs <- dq_unsheltered() %>%
       filter(
         Issue == "Duplicate Entry Exits" &
@@ -1887,7 +1887,7 @@ old_server <- function( input, output, session ) {
   
   output$unshHHIssuesTable <- renderTable({
     ReportStart <- format.Date(input$unsh_dq_startdate, "%m-%d-%Y")
-    ReportEnd <- format.Date(ymd(rm_dates$meta_HUDCSV$Export_End), "%m-%d-%Y")
+    ReportEnd <- format.Date(ymd(rm_dates()$meta_HUDCSV$Export_End), "%m-%d-%Y")
     HHIssues <- dq_unsheltered() %>%
       filter(
         Issue %in% c("Too Many Heads of Household", 
@@ -1911,7 +1911,7 @@ old_server <- function( input, output, session ) {
   
   output$unshHHIssues <- renderUI({
     ReportStart <- format.Date(input$unsh_dq_startdate, "%m-%d-%Y")
-    ReportEnd <- format.Date(ymd(rm_dates$meta_HUDCSV$Export_End), "%m-%d-%Y")
+    ReportEnd <- format.Date(ymd(rm_dates()$meta_HUDCSV$Export_End), "%m-%d-%Y")
     HHIssues <- dq_unsheltered() %>%
       filter(
         Issue %in% c("Too Many Heads of Household", 
@@ -1953,7 +1953,7 @@ old_server <- function( input, output, session ) {
   
   output$unshMissingCountyTable <- renderTable({
     ReportStart <- format.Date(input$unsh_dq_startdate, "%m-%d-%Y")
-    ReportEnd <- format.Date(ymd(rm_dates$meta_HUDCSV$Export_End), "%m-%d-%Y")
+    ReportEnd <- format.Date(ymd(rm_dates()$meta_HUDCSV$Export_End), "%m-%d-%Y")
     county <- dq_unsheltered() %>%
       filter(
         Issue == "Missing County Served" &
@@ -1973,7 +1973,7 @@ old_server <- function( input, output, session ) {
   
   output$unshMissingCounty <- renderUI({
     ReportStart <- format.Date(input$unsh_dq_startdate, "%m-%d-%Y")
-    ReportEnd <- format.Date(ymd(rm_dates$meta_HUDCSV$Export_End), "%m-%d-%Y")
+    ReportEnd <- format.Date(ymd(rm_dates()$meta_HUDCSV$Export_End), "%m-%d-%Y")
     county <- dq_unsheltered() %>%
       filter(
         Issue == "Missing County Served" &
@@ -2012,7 +2012,7 @@ old_server <- function( input, output, session ) {
   
   output$unshOverlapsTable <- renderTable({
     ReportStart <- format.Date(input$unsh_dq_startdate, "%m-%d-%Y")
-    ReportEnd <- format.Date(ymd(rm_dates$meta_HUDCSV$Export_End), "%m-%d-%Y")
+    ReportEnd <- format.Date(ymd(rm_dates()$meta_HUDCSV$Export_End), "%m-%d-%Y")
     
     overlaps <- unsh_overlaps() %>%
       filter(DefaultProvider == input$unshDefaultProvidersList &
@@ -2035,7 +2035,7 @@ old_server <- function( input, output, session ) {
   
   output$unshOverlaps <- renderUI({
     ReportStart <- format.Date(input$unsh_dq_startdate, "%m-%d-%Y")
-    ReportEnd <- format.Date(ymd(rm_dates$meta_HUDCSV$Export_End), "%m-%d-%Y")
+    ReportEnd <- format.Date(ymd(rm_dates()$meta_HUDCSV$Export_End), "%m-%d-%Y")
     
     overlaps <- unsh_overlaps() %>%
       filter(DefaultProvider == input$unshDefaultProvidersList &
@@ -2084,7 +2084,7 @@ old_server <- function( input, output, session ) {
   
   output$unshDQErrorsTable <- DT::renderDataTable({
     ReportStart <- format.Date(input$unsh_dq_startdate, "%m-%d-%Y")
-    ReportEnd <- format.Date(rm_dates$meta_HUDCSV$Export_Date, "%m-%d-%Y")
+    ReportEnd <- format.Date(rm_dates()$meta_HUDCSV$Export_Date, "%m-%d-%Y")
     
     unshDQErrors <- dq_unsheltered() %>%
       filter(
@@ -2119,7 +2119,7 @@ old_server <- function( input, output, session ) {
   
   output$unshDQWarningsTable <- DT::renderDataTable({
     ReportStart <- format.Date(input$unsh_dq_startdate, "%m-%d-%Y")
-    ReportEnd <- format.Date(rm_dates$meta_HUDCSV$Export_Date, "%m-%d-%Y")
+    ReportEnd <- format.Date(rm_dates()$meta_HUDCSV$Export_Date, "%m-%d-%Y")
     
     unshDQWarnings <- dq_unsheltered() %>%
       filter(
