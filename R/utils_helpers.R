@@ -48,7 +48,7 @@ qpr_datatable <- function(.data,
 #' @return \code{(shiny.tag)}
 #' @export
 
-rm_datatable <- function(data,
+datatable_default <- function(data,
                          rownames = FALSE,
                          options = list(dom = 'Bfrtip',
                                         buttons = c('copy', 'excel', 'csvHtml5'),

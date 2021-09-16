@@ -10,24 +10,10 @@
 mod_body_client_counts_ui <- function(id){
   ns <- shiny::NS(id)
   shiny::tagList(
-    shiny::fluidRow(bs4Dash::box(shiny::htmlOutput(ns("header")), width = 12)),
+    ui_header(),
     shiny::fluidRow(bs4Dash::box(
-      shinyWidgets::pickerInput(
-        label = "Select Project",
-        inputId = ns("project"),
-        choices = projects,
-        options = shinyWidgets::pickerOptions(liveSearch = TRUE,
-                                              liveSearchStyle = 'contains')
-      ),
-      shiny::dateRangeInput(
-        ns("date_range"),
-        "Date Range",
-        min = rm_dates()$meta_HUDCSV$Export_Start,
-        start = Sys.Date() - lubridate:::days(7),
-        end = Sys.Date(),
-        format = "mm/dd/yyyy",
-        width = 300
-      ),
+      ui_picker_project(),
+      ,
       width = 12
     )),
     shiny::fluidRow(bs4Dash::box(
@@ -52,7 +38,7 @@ mod_body_client_counts_server <- function(id){
     
     output$header <- shiny::renderUI({
       list(shiny::h2("Client Counts Report"),
-           shiny::h4(input$provider))
+           shiny::h4(input$project))
     })
     
     output$dt_output <- DT::renderDataTable({
@@ -109,7 +95,7 @@ mod_body_client_counts_server <- function(id){
             "Exit Date" = ExitDate,
             Status
           ) |> 
-            rm_datatable()
+            datatable_default()
     })
     
     output$summary <- DT::renderDataTable({
@@ -183,7 +169,7 @@ mod_body_client_counts_server <- function(id){
       
       final <- dplyr::full_join(clients, hhs, by = "Status")
       
-      rm_datatable(final)
+      datatable_default(final)
     })
   })
 }

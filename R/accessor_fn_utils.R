@@ -6,7 +6,7 @@ accessor_create <- function(.x) rlang::new_function(args =
                       ),
                     body = base::quote({
                       if (file.info(path)$mtime < lubridate::floor_date(Sys.time(), "day"))
-                        rdrop2::drop_download(file.path(dropbox_folder, basename(path)), local_path = path)
+                        rdrop2::drop_download(file.path(dropbox_folder, basename(path)), local_path = path, overwrite = TRUE)
                       UU::file_fn(path)(path, ...)
                       
                     }))

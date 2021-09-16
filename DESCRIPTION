@@ -65,3 +65,4 @@ Collate:
     'qpr_expr_spdat1.R'
     'qpr_expr_spdat2.R'
     'run_app.R'
+    'ui_utils.R'

@@ -17,7 +17,7 @@ mod_QPR_tabItem_ui(id, choices = NULL, date_choices = NULL)
 inputId = ns("region"),
 label = "Select Region(s)",
 choices = choices$choices, # 
-options = shinyWidgets::pickerOptions(                                                  liveSearch = TRUE),
+options = shinyWidgets::pickerOptions(liveSearch = TRUE),
 selected = NULL,
 width = "70%"
 )`
