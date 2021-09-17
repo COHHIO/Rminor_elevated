@@ -2,9 +2,12 @@
 
 export(datatable_default)
 export(db_auth)
+export(dq_filter_between)
+export(dq_select_cols)
 export(qpr_datatable)
 export(qpr_infobox)
 export(run_app)
+export(ui_box_solid)
 export(ui_date_range)
 export(ui_header_row)
 export(ui_picker_project)

@@ -34,6 +34,7 @@ Collate:
     'app_config.R'
     'app_server.R'
     'app_ui.R'
+    'dq_utils.R'
     'feather_save.R'
     'find_instances.R'
     'utils_helpers.R'

@@ -31,7 +31,7 @@ db_auth()
 # Create accessor functions
 list2env(create_accessors("data"), .GlobalEnv)
 
-
+clarity_url <- "https://cohhio.clarityhs.com"
 
 
 
