@@ -10,22 +10,19 @@
 mod_body_client_counts_ui <- function(id){
   ns <- shiny::NS(id)
   shiny::tagList(
-    ui_header(),
-    shiny::fluidRow(bs4Dash::box(
-      ui_picker_project(),
-      ,
-      width = 12
-    )),
-    shiny::fluidRow(bs4Dash::box(
+    ui_header_row(),
+    ui_row_box(
+      ui_picker_project()
+    ),
+    ui_row_box(
       title = "Summary",
       DT::dataTableOutput(ns("summary")),
-      width = 12
-    )),
-    shiny::fluidRow(bs4Dash::box(
+    ),
+    ui_row_box(
       title = "Client Details",
       DT::dataTableOutput(ns("dt_output")),
       width = 12
-    ))
+    )
   )
 }
 
