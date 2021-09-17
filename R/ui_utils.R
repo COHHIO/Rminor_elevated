@@ -66,7 +66,8 @@ ui_date_range <- function(
 #'
 #' @examples
 #' ui_row_box(tags$p("Hi"))
-ui_row_box <- function(title,
+ui_row_box <- function(...,
+                       title,
                        footer,
                        status,
                        solidHeader = FALSE,
@@ -85,8 +86,7 @@ ui_row_box <- function(title,
                        label,
                        dropdownMenu,
                        sidebar,
-                       id,
-                       ...) {
+                       id) {
   
   .missing <- UU::missing_args(include_null = FALSE)
   .present <- ls() |> 
@@ -94,6 +94,49 @@ ui_row_box <- function(title,
     rlang::set_names()
   .dots <- rlang::dots_list(...)
   shiny::fluidRow(eval(rlang::call2(bs4Dash::box, !!!purrr::map(.present, rlang::sym), !!!.dots)))
+}
+
+#' @title A default full width row box.
+#' @inheritParams bs4Dash::box
+#' @return A \link[bs4Dash]{box} with solid header
+#' @export
+#'
+#' @examples
+#' ui_box_solid("Hi")
+ui_box_solid <- function(...,
+                       title,
+                       footer,
+                       status,
+                       solidHeader = TRUE,
+                       background,
+                       width = 6,
+                       height,
+                       collapsible = TRUE,
+                       collapsed = FALSE,
+                       closable = FALSE,
+                       maximizable = FALSE,
+                       icon,
+                       gradient = FALSE,
+                       boxToolSize = "sm",
+                       elevation,
+                       headerBorder = TRUE,
+                       label,
+                       dropdownMenu,
+                       sidebar,
+                       id
+                       ) {
+  
+  
+  if (!missing(id))
+    id = purrr::when(id, 
+                     stringr::str_detect(., "^dq\\_box\\_", negate = TRUE) ~ paste0("dq_box_", .),
+                     ~ .)
+  .missing <- UU::missing_args(include_null = FALSE)
+  .dots <- rlang::dots_list(..., .named = TRUE)
+  .present <- ls() |> 
+    {\(x) {x[!x %in% c(.missing, "...")]}}() |> 
+    rlang::set_names()
+  eval(rlang::call2(bs4Dash::box, !!!purrr::map(.present, rlang::sym), !!!.dots))
 }
 
 
