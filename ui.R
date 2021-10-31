@@ -26,8 +26,8 @@ dashboardPage(
                tabName = "currentProviderLevel"),
       menuItem(
         "Ending Veteran Homelessness",
-        menuSubItem("Active List (Beta)", tabName = "vetActiveList")#,
-        # menuSubItem("USICH Benchmarks", tabName = "dashUSICH"),
+        menuSubItem("Active List (Beta)", tabName = "vetActiveList"),
+        menuSubItem("USICH Benchmarks (Beta)", tabName = "dashUSICH")#,
         # menuSubItem("Inflow Outflow", tabName = "flow")
       ),
       menuItem("COVID-19 Vaccine Distribution",
@@ -396,6 +396,37 @@ dashboardPage(
                     width = 12
                   ))
               )),
+      tabItem(
+        tabName = "dashUSICH",
+        fluidPage(
+          tags$style(".small-box.bg-black { background-color: #778899 !important;}"),
+          fluidRow(box(htmlOutput(
+            "headerUSICH"
+          ), width = 12)),
+          fluidRow(
+            box(
+              pickerInput(
+                label = "Select County/-ies",
+                inputId = "vetBenchmarkCounty",
+                multiple = TRUE,
+                choices = regions() %>%
+                  arrange(County) %>% pull(County),
+                selected = regions() %>%
+                  arrange(County) %>% pull(County),
+                options = pickerOptions(
+                  liveSearch = TRUE,
+                  liveSearchStyle = 'contains',
+                  actionsBox = TRUE
+                )))),
+          fluidRow(
+            valueBoxOutput("usich_1", width = 12)),
+          fluidRow(
+            valueBoxOutput("usich_2", width = 12)),
+          fluidRow(
+            valueBoxOutput("usich_3", width = 12)),
+          fluidRow(
+            valueBoxOutput("usich_4", width = 12)))
+      ),
       tabItem(
         tabName = "dqTab",
         fluidRow(box(htmlOutput(

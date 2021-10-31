@@ -32,6 +32,8 @@ if (!exists("df_nms")) {
   list2env(readRDS("data/Rminor_elevated.rds"), e)
 }
 
+`%nin%` = Negate(`%in%`)
+
 providers <- sort(validation()$ProjectName) %>% unique() 
 
 desk_time_providers <- validation() %>%
